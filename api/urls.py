@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from api.views import *
 router = DefaultRouter()
 router.register('complaints', ComplaintView,basename="complaints")
+router.register('comments', CommentView,basename="comments")
 urlpatterns = [
     path('', include(router.urls)),
 

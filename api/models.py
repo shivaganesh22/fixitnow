@@ -27,8 +27,7 @@ class ComplaintModel(models.Model):
     approved_by=models.ForeignKey(User,on_delete=models.CASCADE,related_name="approved_by",null=True,blank=True)
     # class Meta:
     #     unique_together = ('subject', 'location')
-    def __str__(self):
-        return self.user.username+" "+self.subject
+
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="liked_user")
     complaint = models.ForeignKey(ComplaintModel, on_delete=models.CASCADE, related_name='liked_set')
@@ -42,5 +41,13 @@ class Dislike(models.Model):
         unique_together = ('user', 'complaint')    
 class UserInfoModel(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    score=models.IntegerField(default=0)
     token=models.TextField()
     location=models.TextField()
+class CommentModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    complaint = models.ForeignKey(ComplaintModel, on_delete=models.CASCADE, related_name='commented')
+    comment=models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.user.username

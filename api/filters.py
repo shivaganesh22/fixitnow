@@ -16,3 +16,7 @@ class UserInfoFilter(django_filters.FilterSet):
     class Meta:
         model = UserInfoModel
         fields = '__all__'
+class CommentFilter(django_filters.FilterSet):
+    class Meta:
+        model = CommentModel
+        fields = '__all__'

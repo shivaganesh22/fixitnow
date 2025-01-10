@@ -13,8 +13,7 @@ from .serializers import *
 from django.contrib.auth import authenticate
 from .filters import *
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import GenericAPIView,ListCreateAPIView
-from rest_framework.mixins import ListModelMixin
+
 import uuid
 from django.core.mail import send_mail
 from rest_framework.decorators import action
@@ -196,6 +195,9 @@ class ComplaintView(viewsets.ModelViewSet):
             instance.status=True
             instance.approved_by=request.user
             instance.save()
+            k=UserInfoModel.objects.get(user=self.request.user)
+            k.score+=1
+            k.save()
             try:
                 tokens = list(
                     UserInfoModel.objects.filter(location=instance.location)
@@ -279,5 +281,11 @@ class UserInfoView(APIView):
         serializer = UserInfoSerializer(user_info)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-
-
+class CommentView(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    filter_backends = [DjangoFilterBackend]
+    queryset = CommentModel.objects.order_by("-id")
+    filterset_class = CommentFilter
+    authentication_classes = [TokenAuthentication]
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
