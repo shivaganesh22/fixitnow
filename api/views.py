@@ -13,7 +13,7 @@ from .serializers import *
 from django.contrib.auth import authenticate
 from .filters import *
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.utils import timezone
 import uuid
 from django.core.mail import send_mail
 from rest_framework.decorators import action
@@ -21,7 +21,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 import requests
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
-domain="http://192.168.50.208:8000"
+# domain="http://192.168.50.208:8000"
+domain="https://fixitnow.pythonanywhere.com"
 def sendMail(subject,message,email):
     send_mail(subject,message,'aupulse@gmail.com',email)
 class ForgotPasswordView(APIView):
@@ -81,19 +82,20 @@ class SignupView(APIView):
 
 class FCMv1Sender:
     PROJECT_ID = 'fixitnow-698b4'
-    SERVICE_ACCOUNT_JSON = {
-                        "type": "service_account",
-                        "project_id": "fixitnow-698b4",
-                        "private_key_id": "6eed46c69d6289dd8bd2387f1ef2b3af36ad1b65",
-                        "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDDbw5GbKAyBDKC\nSUOSonuECiZtHqcOvdzBpJKIKfLwX0egS3EpvRtt2K+V76TWxvsRa2CGjsefMXiy\nCDKHrFfiGytcDEG+lDFMzKNa8K56MD6uE6X0IC/EADYH6emohoTAkNOdJ5lyUSwz\n6NaW3ZUv7WzwYVkUa2G/YL5rqB/aoscWT2rn/8VMnPdP7WhMxtqodvQIpACateAu\nNjoVaxpyKjePB1qE5EqA8BWeSHYsNvX7GYxl3Ex8uEy8J059wWSSZ63CK1+7x7LI\nMr/Tx5PLNplNvDOejGdyT7Yfti5oj0IwBdh3hhKJt9cnlubu5BedpoGE3hQz7VV2\nT1h60L73AgMBAAECggEAPVVDlh9uEPRXQ6MphUHf4Jrs308A37P/LXhwEjKUDxLf\n4DL88zvpeUpJJJV+VndBAQEBXIk/pbq5ZaoD7adNN2UOcQdZtK0+YZtRYu9o2mj8\nqtX4vYpCY1Ero8Upst1wmRx6hPYSBpnp9OqMOfGVaeKpzzDF644dsZlzeUbcpFjn\n58dW1FqFBr7iTQxYaF9xz5ZO04NhydDSfBOaOdrQKXGitRHX0CzHKEOkGLO+GSIp\ngMja0TMF4970BwTxLr4uJYp4BnbCXZ7XGcKBhQkdG2qNZE2kQFiKfBg4fmTCIwME\nmf9rg+cLUYSBJj+YmIguDXve8YnpwHRDmsLvEhjvDQKBgQDsEJnq//ymhVZwRPhP\nXWd6TS6F6EPWsYJVzFq3OVfSAh5IMU5IDZNVQNOraVl0dAFUAeSVA8F3tMJvBadC\nNzXwrenjr3UatBWSTpbcMFHYuvlorQ9O2BqdZsvbwSYz10ggcLU/aZTJXEup+4GF\nOfZNXCpxTkkGokpmOf6CXMoxqwKBgQDT8BEwE4JthRpj9+/VO+wfbWXWPXlFfAKd\nVXP/6D3Z02for5KWiGkrTnPGTYFyMMqDf4KHBmxrQh2PbDfKqOt+ZrCdeILRDVTn\nVJc8of1P6iMnUbfyHLKDyx5t0bk29/MjpsgpcJbNCc1NmwAUs/Ev3p7XNTiZwlQG\n8+S5s2fz5QKBgEvgVijT2RiJGSyC7rFL23vTHRYLfuqeKb98LNhhxRmKdsNLndbJ\nDkdDzAV3mjo1I0wmQ5umFmRspGZdEdLVvi+7Jsd5WRGZOqnJOvJRUa1xA8OihJ4a\nFgvrw7DB146oLtXGhGt6e0lxshxT6+CvrbxV2IqM2CoatgE/uM+cFZ17AoGATgvL\n6I5mq3omm8XEFhw4+eHJbLm6nPHr7JB5ZTXbAQou66ssKi8Vu5LqY45LKwf4q7Ab\nGyosZts0E4rgiMrn3eZnB7ZHRkDIkV+/Sd7Fb9ZjF6mqOYiD3LDCBeMDd9CbQve6\nIjiJ7/u6FOgNgZI6MUyj5dB9hXHgi6bpBdGhaFkCgYEA3CDZXEg7Hz7aDJnrsn+q\nyGbkyH03xIaZkW0OvOziVsxvPaT39mFUsPR9nfcqwhDFAVgbsOZMey2HtmvRiwCu\nWD8hHrcCgO7FQSjTJY+zdQMqZuzp5/Mi+CMIX08TBiDSDU0bq9+mLd4bf7HrSrRe\nL4t8okHAtCo6gvZFUq/gu18=\n-----END PRIVATE KEY-----\n",
-                        "client_email": "fixitnow-service-new@fixitnow-698b4.iam.gserviceaccount.com",
-                        "client_id": "101186740008532573154",
-                        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                        "token_uri": "https://oauth2.googleapis.com/token",
-                        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-                        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fixitnow-service-new%40fixitnow-698b4.iam.gserviceaccount.com",
-                        "universe_domain": "googleapis.com"
-        }
+    SERVICE_ACCOUNT_JSON ={
+  "type": "service_account",
+  "project_id": "fixitnow-698b4",
+  "private_key_id": "0af0fed30b42c64ddf92accbde00b3436d5c39f1",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDI123ScJWao1dm\nZX//rNhlpbq8/UZXkK4WihvdHn4MfFgXNz7OwFsJ9+8ktQLzEiwapt8tMcS5IYB4\nckwd4d7+H6n8OG1V3wH36lptSwv9VJZVU7bQnhIoqJzDNoTni63zZDAc+hTdHylu\n4G4KFXc3ci4MuGWgneyufnJ2CFUtRMwL+T38rn2jcbInv3uUbdy609adqH3DkomA\nzcxHU4bUETE5BJdyY/FkIUvHdG9LkwDQILkZ2Rq6yuDP6yY/wTAClQQJdQr3KHxr\nQESdFRjlcAamoPCPjvQr9ay6bdCK4OuRUxUrTzrH9F0FiS9Vqe61Xs8d+kZxkltz\nfon6wKjJAgMBAAECggEAFSwWrPZG4yIggtAk5fJV7qNBtA4cJft/yqr9BHqkLZNH\nIw1lHt0Ky9p5+JvnZ3HtOdMJGGXUd/K27RuZeBX5UL9MR2U4a3LCrZykMzzT0v0h\nivW0AjqDrgsWWYLsEE+6gvu3EbrwS54vGzvoBcKdCniML7WZqwyy6HM2hEhdGFQm\nC6pjV3PMzMr8zGJVrxZYXBW4TI3qL+UuSumifqfqKOYwX60URDdJTJfyxNLLsGpI\ndXQcI3IiQv8ev0kdihndHhbRQWpIEifH13Akgra0CzKWvdPsinDQTrq7v1JH+T1J\nlH17iQ/YDfi3yv34htOAkzG/9xKz0HNwaQs3l/SoAQKBgQD5UWEMl7L8Ji2FfbM8\n8ENk0MEFXXKr1Qcc/DiAeHuNGpIeJKqF/RKm1pN5uQa6AKDdJDt0SiVstTuBo60R\ndQ+CkLfYilIuyr9XVaEMjDLgQo+NVfbH00kZQM9ZcD5z9PV5lNJkQPjntjBiU1at\nIBs/0HU+wgNZ7aunudfOoss8AQKBgQDOOXGSmn473qv9CRZsQhmlzLR0B7jYTY6h\npCphAGqnM7LGH1S5p/NUbrJtGcYqfPrL1ZkLWzhpEVtk0742d1y2eoJiCpuX4AwG\n8Rr5OhbuUWOhYiE18OxjIQ/7fLnqd2VL2NXg2lpI9dp65ZBD1eZzSOkKCxsChRiX\nfYaU/F6MyQKBgQC7w/MwNauBxQrxhzqPAW/wJFvKO5eaG8TQqo+vCY4bNdCnzPt0\nD6WVavMEcDnFqaV9BsWUDidjWJZpSyiThjLZJT6gYYQFY4J5Nq8ksQ274cUVL5G8\n6r4Zu7qtZCBU2j5pg5B0Go6ai5ai5prXpd9/zvIOArXda2ak2gzSvb4MAQKBgGdi\nZux/JR+wjvpojuQw8xiqmiC9Kk7N+t5QJarBgbZW9Z3bYSc96n/+italIDJ2u2hq\nqbIGxi3uNKpEeMxnZIRawHiUJtKp0H2+a65cD9jj1pW2Uz3ujSNZFOEX80B3IMI4\nb2itLqv7DM+lvIA1gLV07NdLH/xQazavCEQyjNf5AoGBAIzjOI8v2B5AH5P2UVLq\ntnli4+M18v1/pxMOzoSKUhCPfwF2Mojr93vQEEepHVM7rW2XHSpYWCk9XT+/TIKB\n2U3B4+Zl3uff/o7xYxddmhjU+YNKenjL5aYPkkwFHF662nEnwnUxZWmKuWUeKdP0\nmRTRFFc3Wq6BPXtk9BU5/KaT\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-4k75o@fixitnow-698b4.iam.gserviceaccount.com",
+  "client_id": "114736655823775041520",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-4k75o%40fixitnow-698b4.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
+
     def __init__(self):
         
         self.credentials = service_account.Credentials.from_service_account_info(
@@ -140,7 +142,10 @@ class ComplaintView(viewsets.ModelViewSet):
     filterset_class = ComplaintFilter
     authentication_classes = [TokenAuthentication]
     parser_classes = (MultiPartParser, FormParser)
-    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request 
+        return context
     def determine_media_type(self, file):
         if file is None:
             return None
@@ -158,7 +163,7 @@ class ComplaintView(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.action == 'user_complaints':
             return ComplaintModel.objects.filter(user=self.request.user).order_by("-id")
-        elif self.action in ['like', 'dislike', 'update', 'partial_update', 'retrieve', 'destroy']:  # Include other actions
+        elif self.action in ['like', 'lock','dislike','approve_like','approve_dislike', 'update', 'partial_update', 'retrieve', 'destroy']:  # Include other actions
             return ComplaintModel.objects.all().order_by("-id")
         else:
             return ComplaintModel.objects.exclude(user=self.request.user).order_by("-id")
@@ -188,16 +193,18 @@ class ComplaintView(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', True)
         instance = self.get_object() 
-        if 'media' in request.FILES:
-            media_type = self.determine_media_type(request.FILES.get('media'))
-            instance.media = request.FILES.get('media')
-            instance.media_type = media_type
+        if 'approved_media' in request.FILES:
+            media_type = self.determine_media_type(request.FILES.get('approved_media'))
+            instance.approved_media = request.FILES.get('approved_media')
+            instance.approved_media_type = media_type
             instance.status=True
             instance.approved_by=request.user
+            instance.lock=None
+            ApproveLike.objects.filter(complaint=instance).delete()
+            ApproveDislike.objects.filter(complaint=instance).delete()
+            instance.approved_date=timezone.now() + timedelta(days=1)
             instance.save()
-            k=UserInfoModel.objects.get(user=self.request.user)
-            k.score+=1
-            k.save()
+
             try:
                 tokens = list(
                     UserInfoModel.objects.filter(location=instance.location)
@@ -208,9 +215,9 @@ class ComplaintView(viewsets.ModelViewSet):
                     fcm_sender = FCMv1Sender()
                     fcm_sender.send_message(
                         tokens,
-                        "Issued resolved in your city",
+                        "Issue Updated in your city",
                         instance.subject,
-                        domain+instance.media.url if media_type=="image" else "",
+                        domain+instance.approved_media.url if media_type=="image" else "",
                     )
             except Exception as e:
                 print(f"Error sending FCM message: {e}")
@@ -218,14 +225,6 @@ class ComplaintView(viewsets.ModelViewSet):
             return Response({'message': 'Media updated successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response({'error': 'No media file provided'}, status=status.HTTP_400_BAD_REQUEST)
-    # def update(self, request, *args, **kwargs):
-    #     partial = kwargs.pop('partial', False)  # Allow partial updates
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
-    #     media_type = self.determine_media_type(self.request.FILES.get('media'))
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save(approved_by=self.request.user, media_type=media_type, status=True)  # Update fields
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'], url_path='like')
     def like(self, request, pk=None):
@@ -256,6 +255,43 @@ class ComplaintView(viewsets.ModelViewSet):
             # Use likes_set and correct filter
             Like.objects.filter(user=user, complaint=complaint).delete()  # Remove like if exists
             return Response({'message': 'Disliked'}, status=status.HTTP_200_OK)
+    @action(detail=True, methods=['get'], url_path='approve_like')
+    def approve_like(self, request, pk=None):
+        complaint = self.get_object()
+        user = request.user
+        try:
+            like = ApproveLike.objects.get(user=user, complaint=complaint)
+            like.delete()  # Remove like
+            return Response({'message': 'Like removed'}, status=status.HTTP_200_OK)
+        except ApproveLike.DoesNotExist:
+            ApproveLike.objects.create(user=user, complaint=complaint)  # Add like
+            # Use dislikes_set and correct filter
+            ApproveDislike.objects.filter(user=user, complaint=complaint).delete()  # Remove dislike if exists
+            return Response({'message': 'Liked'}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='approve_dislike')
+    def approve_dislike(self, request, pk=None):
+        complaint = self.get_object()
+        user = request.user
+        try:
+            # Use dislikes_set and correct filter
+            dislike = ApproveDislike.objects.get(user=user, complaint=complaint)
+            dislike.delete()  # Remove dislike
+            return Response({'message': 'Dislike removed'}, status=status.HTTP_200_OK)
+        except ApproveDislike.DoesNotExist:
+            ApproveDislike.objects.create(user=user, complaint=complaint)  # Add dislike
+            # Use likes_set and correct filter
+            ApproveLike.objects.filter(user=user, complaint=complaint).delete()  # Remove like if exists
+            return Response({'message': 'Disliked'}, status=status.HTTP_200_OK)
+    @action(detail=True, methods=['get'], url_path='lock')
+    def lock(self, request, pk=None):
+        complaint = self.get_object()
+        user = request.user
+        complaint.lock=user
+        complaint.approved_by=None
+        complaint.lock_date=timezone.now()+timedelta(days=4)
+        complaint.save()
+        return Response({'message': 'Complaint locked successfully'}) 
 
     @action(detail=False, methods=['get'], url_path='user-complaints')
     def user_complaints(self, request):

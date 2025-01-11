@@ -21,10 +21,15 @@ class ComplaintModel(models.Model):
     complaint = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False)
+    lock = models.ForeignKey(User,on_delete=models.CASCADE,related_name="locked_user",blank=True,null=True)
+    lock_date =models.DateTimeField(blank=True,null=True)
     location=models.TextField()
     media = models.FileField(upload_to='uploads/', blank=True, null=True)
     media_type = models.CharField(max_length=10, blank=True, null=True) 
     approved_by=models.ForeignKey(User,on_delete=models.CASCADE,related_name="approved_by",null=True,blank=True)
+    approved_media=models.FileField(upload_to='uploads/', blank=True, null=True)
+    approved_media_type = models.CharField(max_length=10, blank=True, null=True) 
+    approved_date=models.DateTimeField(blank=True,null=True)
     # class Meta:
     #     unique_together = ('subject', 'location')
 
@@ -39,9 +44,19 @@ class Dislike(models.Model):
     complaint = models.ForeignKey(ComplaintModel, on_delete=models.CASCADE, related_name='disliked_set')
     class Meta:
         unique_together = ('user', 'complaint')    
+class ApproveLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="approve_liked_user")
+    complaint = models.ForeignKey(ComplaintModel, on_delete=models.CASCADE, related_name='approve_liked_set')
+    class Meta:
+        unique_together = ('user', 'complaint')  
+
+class ApproveDislike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="approve_disliked_user")
+    complaint = models.ForeignKey(ComplaintModel, on_delete=models.CASCADE, related_name='approve_disliked_set')
+    class Meta:
+        unique_together = ('user', 'complaint')    
 class UserInfoModel(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    score=models.IntegerField(default=0)
     token=models.TextField()
     location=models.TextField()
 class CommentModel(models.Model):
